@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaign Debrief — 茶飲品牌 KOL 行銷成效報告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#17110c; --bg-elevated:#1f1710; --bg-card:#241b13;
+    --ink:#f4ece0; --ink-dim:#b8a890; --ink-faint:#83725c; --divider:#3a2c1d; --gold:#c8963e;
+    --seg-2:#c8963e; --seg-3:#8a6a45; --seg-4:#5c4a35;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--bg); color:var(--ink); font-family:'Inter', sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  ::selection{ background:var(--gold); color:#17110c; }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
+  a{ color:inherit; text-decoration:none; }
+
+  nav{ position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:18px 32px; background:rgba(23,17,12,0.88); backdrop-filter: blur(10px); border-bottom:1px solid var(--divider); }
+  .nav-brand{ font-family:'Fraunces', serif; font-weight:600; font-size:17px; display:flex; align-items:center; gap:9px; }
+  .nav-brand .dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); }
+  .nav-links{ display:flex; gap:4px; flex-wrap:wrap; }
+  .nav-links button{ font-family:'Inter',sans-serif; font-size:13.5px; font-weight:500; background:none; border:none; color:var(--ink-dim); padding:8px 14px; border-radius:20px; cursor:pointer; transition:all .2s ease; letter-spacing:0.01em; }
+  .nav-links button:hover{ color:var(--ink); }
+  .nav-links button.active{ background:var(--bg-card); color:var(--ink); }
+  .nav-links button .tag{ display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:7px; vertical-align:middle; }
+
+  main{ max-width:960px; margin:0 auto; padding:0 32px 120px; }
+  section{ display:none; }
+  section.active{ display:block; animation:fadeIn .45s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:10px; }
+  .eyebrow::before{ content:''; width:22px; height:1px; background:var(--gold); }
+
+  .hero{ padding:64px 0 40px; border-bottom:1px solid var(--divider); }
+  .hero h1{ font-size:42px; line-height:1.15; max-width:680px; }
+  .hero p.sub{ color:var(--ink-dim); margin-top:16px; max-width:560px; font-size:15.5px; }
+
+  .block-title{ display:flex; align-items:baseline; justify-content:space-between; margin:56px 0 20px; }
+  .block-title h2{ font-size:21px; }
+  .block-title .note{ font-size:12px; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; text-align:right; }
+
+  .kpi-strip{ display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--divider); border:1px solid var(--divider); }
+  .kpi-strip.cols4{ grid-template-columns:repeat(4,1fr); }
+  .kpi{ background:var(--bg); padding:22px 18px; }
+  .kpi .num{ font-family:'IBM Plex Mono',monospace; font-size:25px; font-weight:600; color:var(--ink); }
+  .kpi .label{ font-size:12px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em; }
+  .kpi.wom .num{ font-size:22px; }
+
+  .compare-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .compare-card{ background:var(--bg-card); border:1px solid var(--divider); border-radius:4px; padding:22px; position:relative; overflow:hidden; }
+  .compare-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
+  .compare-card .pname{ font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin-bottom:4px; }
+  .compare-card .ptag{ font-size:12px; color:var(--ink-faint); margin-bottom:18px; }
+  .compare-card .growth{ font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:600; color:var(--accent); }
+  .compare-card .growth-label{ font-size:11.5px; color:var(--ink-faint); margin-top:2px; margin-bottom:16px; }
+  .compare-card .achieve{ font-size:13px; color:var(--ink-dim); display:flex; justify-content:space-between; align-items:center; padding-top:14px; border-top:1px solid var(--divider); }
+  .compare-card .achieve b{ font-family:'IBM Plex Mono',monospace; color:var(--ink); }
+  .status-pill{ display:inline-block; font-size:10.5px; font-family:'IBM Plex Mono',monospace; padding:3px 9px; border-radius:20px; letter-spacing:0.03em; margin-top:14px; }
+  .status-pill.ready{ background:rgba(200,150,62,0.15); color:var(--gold); }
+  .status-pill.pending{ background:rgba(184,168,144,0.12); color:var(--ink-faint); }
+
+  .goto-projects{ margin-top:56px; display:flex; gap:12px; flex-wrap:wrap; }
+  .goto-btn{ flex:1; min-width:220px; background:var(--bg-card); border:1px solid var(--divider); padding:18px 20px; border-radius:4px; cursor:pointer; text-align:left; transition:border-color .2s ease, transform .2s ease; }
+  .goto-btn:hover{ border-color:var(--accent); transform:translateY(-2px); }
+  .goto-btn .arrow{ float:right; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; }
+  .goto-btn .gname{ font-family:'Fraunces',serif; font-size:16px; font-weight:600; margin-bottom:4px;}
+  .goto-btn .gdesc{ font-size:12px; color:var(--ink-faint); }
+
+  .product-hero{ padding:56px 0 32px; border-bottom:1px solid var(--divider); }
+  .product-hero h1{ font-size:36px; }
+  .product-hero .meta{ display:flex; gap:20px; margin-top:18px; flex-wrap:wrap; }
+  .meta-item{ font-size:12.5px; color:var(--ink-dim); }
+  .meta-item b{ color:var(--ink); font-family:'IBM Plex Mono',monospace; font-weight:500; }
+
+  .metric-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--divider); border:1px solid var(--divider); }
+  .metric-grid .kpi .num{ font-size:22px; }
+
+  .empty-state{ border:1px dashed var(--divider); border-radius:6px; padding:36px 28px; text-align:center; color:var(--ink-faint); }
+  .empty-state .icon{ font-size:22px; margin-bottom:10px; opacity:.7; }
+  .empty-state .msg{ font-size:13.5px; }
+  .empty-state .msg b{ color:var(--ink-dim); font-weight:600; }
+
+  .sales-merged{ background:var(--bg-card); border:1px solid var(--divider); border-radius:4px; padding:28px; }
+  .sm-header{ display:flex; gap:24px; margin-bottom:28px; flex-wrap:wrap; }
+  .sm-badge{ flex:1; min-width:200px; padding:14px 18px; border-radius:4px; background:var(--bg-elevated); }
+  .sm-badge .bnum{ font-family:'IBM Plex Mono',monospace; font-size:26px; font-weight:600; color:var(--accent); }
+  .sm-badge .blabel{ font-size:11.5px; color:var(--ink-faint); margin-top:3px; }
+  .sm-chart{ padding-top:6px; }
+  .sm-track{ position:relative; height:44px; margin-bottom:34px; }
+  .sm-track:last-child{ margin-bottom:6px; }
+  .sm-track-bg{ position:absolute; left:0; right:0; top:16px; height:12px; background:var(--bg-elevated); border-radius:6px; }
+  .sm-track-bg.dashed{ border:1px dashed var(--divider); background:transparent; }
+  .sm-bar{ position:absolute; left:0; top:16px; height:12px; border-radius:6px; width:0%; transition:width 1s cubic-bezier(.2,.8,.2,1); }
+  .sm-bar.before{ background:var(--ink-faint); }
+  .sm-bar.after{ background:var(--accent); box-shadow:0 0 14px var(--accent); opacity:0.9;}
+  .sm-bar-label{ position:absolute; top:-22px; left:0; font-size:12px; color:var(--ink-dim); white-space:nowrap; }
+  .sm-bar-label .v{ color:var(--ink); font-family:'IBM Plex Mono',monospace; margin-left:6px; }
+  .sm-target-line{ position:absolute; top:4px; bottom:-14px; width:1.5px; border-left:1.5px dashed var(--ink-faint); }
+  .sm-target-line span{ position:absolute; top:-20px; left:6px; font-size:10.5px; color:var(--ink-faint); white-space:nowrap; font-family:'IBM Plex Mono',monospace; }
+
+  .funnel-panel{ background:var(--bg-card); border:1px solid var(--divider); border-radius:4px; padding:28px; margin-bottom:14px; }
+  .funnel-row{ display:flex; align-items:center; gap:16px; margin-bottom:8px; }
+  .funnel-track{ flex:1; height:34px; background:var(--bg-elevated); border-radius:4px; overflow:hidden; }
+  .funnel-fill{ height:100%; display:flex; align-items:center; padding-left:14px; font-family:'IBM Plex Mono',monospace; font-size:13px; color:#17110c; font-weight:600; border-radius:4px; transition:width 1s cubic-bezier(.2,.8,.2,1); white-space:nowrap; width:0%; }
+  .funnel-fill.stage1{ background:var(--accent); }
+  .funnel-fill.stage2{ background:var(--gold); }
+  .funnel-tag{ width:110px; font-size:12.5px; color:var(--ink-dim); text-align:right; flex-shrink:0; }
+  .funnel-arrow{ text-align:center; font-size:11.5px; color:var(--ink-faint); margin:6px 0 14px 126px; font-family:'IBM Plex Mono',monospace; }
+  .comp-title{ font-size:12px; color:var(--ink-faint); margin:22px 0 10px; letter-spacing:0.02em; }
+  .comp-bar{ display:flex; height:16px; border-radius:8px; overflow:hidden; }
+  .comp-seg{ height:100%; }
+  .comp-legend{ display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; }
+  .comp-legend-item{ display:flex; align-items:center; gap:7px; font-size:12px; color:var(--ink-dim); }
+  .comp-legend-item .sw{ width:9px; height:9px; border-radius:2px; }
+  .comp-legend-item b{ color:var(--ink); font-family:'IBM Plex Mono',monospace; font-weight:500; margin-left:2px; }
+
+  .reels-links{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .reel-link-card{ display:flex; gap:12px; align-items:center; background:var(--bg-card); border:1px solid var(--divider); border-radius:4px; padding:14px; transition:border-color .2s ease, transform .2s ease; }
+  .reel-link-card:hover{ border-color:var(--accent); transform:translateY(-2px); }
+  .rl-thumb{ width:38px; height:38px; border-radius:4px; background:var(--bg-elevated); display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:14px; flex-shrink:0; }
+  .rl-title{ font-size:13px; font-weight:600; }
+  .rl-desc{ font-size:11px; color:var(--ink-faint); margin-top:2px; }
+
+  .load-msg, .err-msg{ padding:80px 0; text-align:center; color:var(--ink-faint); font-size:13.5px; }
+  .err-msg b{ color:var(--ink-dim); }
+
+  footer{ text-align:center; padding:40px 0 20px; color:var(--ink-faint); font-size:12px; border-top:1px solid var(--divider); margin-top:40px; }
+
+  @media(max-width:760px){
+    nav{ padding:14px 18px; }
+    main{ padding:0 18px 80px; }
+    .hero h1, .product-hero h1{ font-size:28px; }
+    .kpi-strip, .kpi-strip.cols4{ grid-template-columns:repeat(2,1fr); }
+    .compare-grid{ grid-template-columns:1fr; }
+    .metric-grid{ grid-template-columns:repeat(2,1fr); }
+    .reels-links{ grid-template-columns:1fr; }
+    .sm-header{ flex-direction:column; }
+    .funnel-tag{ width:76px; font-size:11px; }
+    .funnel-arrow{ margin-left:92px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+  Google Sheets 連線設定 —— 換成你自己「發布到網路」產生的 CSV 連結
+  Google Sheets → 檔案 → 共用 → 發布到網路 → 該分頁 → CSV → 複製連結
+============================================================= -->
+<script>
+  const CAMPAIGNS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTS4n_vgY-Q17J-3D2tKVUL7YvPvistNn9jo7MxuUJLhfPYXuFTjycsRn5Y6qsqqgarLUbKWNyaZr9S/pub?gid=1164310309&single=true&output=csv";
+  const REELS_LINKS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTS4n_vgY-Q17J-3D2tKVUL7YvPvistNn9jo7MxuUJLhfPYXuFTjycsRn5Y6qsqqgarLUbKWNyaZr9S/pub?gid=1462508065&single=true&output=csv";
+</script>
+
+<nav>
+  <div class="nav-brand"><span class="dot"></span> Campaign Debrief</div>
+  <div class="nav-links" id="navLinks"></div>
+</nav>
+
+<main id="main">
+  <div class="load-msg" id="loading">資料載入中…</div>
+</main>
+
+<footer>Campaign Debrief — KOL Reels × Facebook WOM × Sales Performance Report</footer>
+
+<script>
+const fmt = n => (n === null || n === undefined) ? '—' : Number(n).toLocaleString();
+const pct = n => (n === null || n === undefined) ? null : Number(n);
+
+const NUMERIC_FIELDS = ['sort_order','sales_baseline','sales_campaign','sales_target',
+  'kol_views','kol_likes','kol_comments','kol_shares','kol_reposts',
+  'wom_likes','wom_comments','wom_shares','wom_media_pickups'];
+
+// 簡易 CSV 解析器（支援雙引號包住含逗號的欄位）
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  text = text.replace(/\r\n/g,'\n');
+  for(let i=0; i<text.length; i++){
+    const ch = text[i];
+    if(inQuotes){
+      if(ch === '"'){
+        if(text[i+1] === '"'){ field += '"'; i++; } else { inQuotes = false; }
+      } else { field += ch; }
+    } else {
+      if(ch === '"'){ inQuotes = true; }
+      else if(ch === ','){ row.push(field); field=''; }
+      else if(ch === '\n'){ row.push(field); rows.push(row); row=[]; field=''; }
+      else { field += ch; }
+    }
+  }
+  if(field.length || row.length){ row.push(field); rows.push(row); }
+  const header = rows.shift().map(h=>h.trim());
+  return rows.filter(r => r.some(c => c.trim() !== '')).map(r=>{
+    const obj = {};
+    header.forEach((h,i)=>{
+      let v = (r[i] ?? '').trim();
+      if(v === ''){ obj[h] = null; }
+      else if(NUMERIC_FIELDS.includes(h)){ obj[h] = Number(v.replace(/,/g,'')); }
+      else { obj[h] = v; }
+    });
+    return obj;
+  });
+}
+
+async function fetchCSV(url){
+  const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'cachebust=' + Date.now());
+  if(!res.ok) throw new Error(`讀取失敗 (${res.status})`);
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+function computeGrowth(c){
+  if(c.sales_campaign == null || c.sales_baseline == null || c.sales_baseline == 0) return null;
+  return (c.sales_campaign - c.sales_baseline) / c.sales_baseline * 100;
+}
+function computeAchievement(c){
+  if(c.sales_campaign == null || c.sales_target == null || c.sales_target == 0) return null;
+  return c.sales_campaign / c.sales_target * 100;
+}
+
+function kpiCell(num, label, big=false){
+  return `<div class="kpi"><div class="num" style="${big?'':''}">${num}</div><div class="label">${label}</div></div>`;
+}
+
+function renderNav(campaigns){
+  const nav = document.getElementById('navLinks');
+  nav.innerHTML = `<button class="active" data-target="summary" onclick="go('summary', this)">總覽</button>` +
+    campaigns.map(c => `<button data-target="${c.id}" onclick="go('${c.id}', this)"><span class="tag" style="background:${c.accent}"></span>${c.tag || c.name}</button>`).join('');
+}
+
+function renderSummary(campaigns){
+  const sum = (field) => {
+    const vals = campaigns.map(c => c[field]).filter(v => v != null);
+    return vals.length ? vals.reduce((a,b)=>a+b,0) : null;
+  };
+  const kolFields = ['kol_views','kol_likes','kol_comments','kol_shares','kol_reposts'];
+  const kolLabels = ['總觀看數','總按讚數','總留言數','總分享數','總轉發數'];
+  const womFields = ['wom_likes','wom_comments','wom_shares','wom_media_pickups'];
+  const womLabels = ['口碑文章按讚','口碑文章留言','口碑文章分享','媒體轉發數'];
+
+  const kolHtml = kolFields.map((f,i)=> kpiCell(fmt(sum(f)), kolLabels[i])).join('');
+  const womHtml = womFields.map((f,i)=> kpiCell(fmt(sum(f)), womLabels[i])).join('');
+
+  const compareHtml = campaigns.map(c=>{
+    const growth = computeGrowth(c);
+    const achievement = computeAchievement(c);
+    const ready = c.sales_campaign != null;
+    return `
+    <div class="compare-card" style="--accent:${c.accent}">
+      <div class="pname">${c.name}</div>
+      <div class="ptag">${c.baseline_method || ''}</div>
+      <div class="growth" style="${growth==null?'color:var(--ink-faint); font-size:18px;':''}">${growth!=null ? (growth>=0?'+':'')+growth.toFixed(1)+'%' : (c.sales_baseline==null ? '新品上市' : '計算中')}</div>
+      <div class="growth-label">SALES GROWTH（本期 vs 前期）</div>
+      <div class="achieve"><span>業績目標達成率</span><b style="${achievement==null?'color:var(--ink-faint)':''}">${achievement!=null ? achievement.toFixed(1)+'%' : '蒐集中'}</b></div>
+      <span class="status-pill ${ready?'ready':'pending'}">${ready?'數據完整':'數據蒐集中'}</span>
+    </div>`;
+  }).join('');
+
+  const gotoHtml = campaigns.map(c=>`
+    <button class="goto-btn" style="--accent:${c.accent}" onclick="go('${c.id}', document.querySelector('[data-target=\\'${c.id}\\']'))">
+      <span class="arrow">→</span><div class="gname">${c.name}</div><div class="gdesc">${c.sales_campaign!=null?'完整成效：KOL Reels ／口碑／業績':'數據追蹤中'}</div>
+    </button>`).join('');
+
+  return `
+  <section id="summary" class="active">
+    <div class="hero">
+      <div class="eyebrow">Campaign Summary</div>
+      <h1>${campaigns.length} 檔茶飲新品，KOL 聲量帶動業績實測成長。</h1>
+      <p class="sub">彙整各專案 KOL Reels 觸及、社群口碑聲量與業績轉換成效。</p>
+    </div>
+    <div class="block-title"><h2>TTL KOL Reels</h2><span class="note">總觸及與互動｜合計</span></div>
+    <div class="kpi-strip">${kolHtml}</div>
+    <div class="block-title"><h2>TTL 口碑（WOM）</h2><span class="note">Facebook 口碑文章｜合計</span></div>
+    <div class="kpi-strip cols4">${womHtml}</div>
+    <div class="block-title"><h2>${campaigns.length} 個產品 Sales 表現</h2><span class="note">Sales Growth · Target Achievement</span></div>
+    <div class="compare-grid">${compareHtml}</div>
+    <div class="goto-projects">${gotoHtml}</div>
+  </section>`;
+}
+
+function renderSalesBlock(c){
+  const hasCampaign = c.sales_campaign != null;
+  const hasBaseline = c.sales_baseline != null;
+
+  if(!hasCampaign && !hasBaseline){
+    return `<div class="empty-state"><div class="icon">◌</div><div class="msg">新品無比較基期，<b>業績成長與目標達成率</b>將於數據到齊後以同款圖表呈現。</div></div>`;
+  }
+
+  const growth = computeGrowth(c);
+  const achievement = computeAchievement(c);
+  const scaleMax = Math.max(c.sales_baseline||0, c.sales_campaign||0, c.sales_target||0) * 1.15 || 1;
+  const beforePct = hasBaseline ? (c.sales_baseline/scaleMax*100) : 0;
+  const afterPct = hasCampaign ? (c.sales_campaign/scaleMax*100) : 0;
+  const targetPct = c.sales_target != null ? (c.sales_target/scaleMax*100) : null;
+
+  return `
+  <div class="sales-merged">
+    <div class="sm-header">
+      <div class="sm-badge"><div class="bnum" style="${growth==null?'color:var(--ink-faint); font-size:20px;':''}">${growth!=null?(growth>=0?'+':'')+growth.toFixed(1)+'%':'待計算'}</div><div class="blabel">SALES GROWTH（本期 vs 前期）</div></div>
+      <div class="sm-badge"><div class="bnum" style="${achievement==null?'color:var(--ink-faint); font-size:20px;':''}">${achievement!=null?achievement.toFixed(1)+'%':'蒐集中'}</div><div class="blabel">業績目標達成率${c.sales_target!=null?'（目標 '+fmt(c.sales_target)+'）':'（尚未設定）'}</div></div>
+    </div>
+    <div class="sm-chart">
+      <div class="sm-track">
+        <div class="sm-bar-label">前期／去年同期 Sales<span class="v">${fmt(c.sales_baseline)}</span></div>
+        <div class="sm-track-bg"></div>
+        ${targetPct!=null?`<div class="sm-target-line" style="left:${targetPct}%; border-color:var(--ink-faint)"><span>目標 ${fmt(c.sales_target)}</span></div>`:''}
+        <div class="sm-bar before" style="width:${beforePct}%"></div>
+      </div>
+      <div class="sm-track">
+        <div class="sm-bar-label">本期／今年同期 Sales<span class="v" style="${hasCampaign?'':'color:var(--ink-faint)'}">${hasCampaign?fmt(c.sales_campaign):'數據蒐集中'}</span></div>
+        <div class="sm-track-bg ${hasCampaign?'':'dashed'}"></div>
+        ${targetPct!=null?`<div class="sm-target-line" style="left:${targetPct}%; border-color:var(--ink-faint)"></div>`:''}
+        ${hasCampaign?`<div class="sm-bar after" style="width:${afterPct}%; background:${c.accent}"></div>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderKolBlock(c){
+  if(c.kol_views == null){
+    return `<div class="empty-state"><div class="icon">◌</div><div class="msg"><b>數據蒐集中</b> — Reels 觸及、互動組成將於活動結束後補上。</div></div>`;
+  }
+  const likes = c.kol_likes||0, comments = c.kol_comments||0, shares = c.kol_shares||0, reposts = c.kol_reposts||0;
+  const total = likes+comments+shares+reposts;
+  const engRate = (total/c.kol_views*100).toFixed(2);
+  const segs = [
+    {label:'按讚', val:likes, color:c.accent},
+    {label:'分享', val:shares, color:'var(--seg-2)'},
+    {label:'轉發', val:reposts, color:'var(--seg-3)'},
+    {label:'留言', val:comments, color:'var(--seg-4)'},
+  ];
+  const compBar = segs.map(s=>`<div class="comp-seg" style="width:${(s.val/total*100)}%; background:${s.color}"></div>`).join('');
+  const legend = segs.map(s=>`<div class="comp-legend-item"><span class="sw" style="background:${s.color}"></span>${s.label} <b>${fmt(s.val)}</b>（${(s.val/total*100).toFixed(1)}%）</div>`).join('');
+
+  return `
+  <div class="funnel-panel">
+    <div class="funnel-row"><div class="funnel-tag">觸及 Views</div><div class="funnel-track"><div class="funnel-fill stage1" style="width:100%; background:${c.accent}">${fmt(c.kol_views)}</div></div></div>
+    <div class="funnel-arrow">↓ 互動率 ${engRate}%</div>
+    <div class="funnel-row"><div class="funnel-tag">總互動 Engagements</div><div class="funnel-track"><div class="funnel-fill stage2" style="width:22%">${fmt(total)}</div></div></div>
+    <div class="comp-title">互動組成 ENGAGEMENT BREAKDOWN</div>
+    <div class="comp-bar">${compBar}</div>
+    <div class="comp-legend">${legend}</div>
+  </div>`;
+}
+
+function renderWomBlock(c){
+  return `<div class="metric-grid">
+    ${kpiCell(fmt(c.wom_likes),'按讚數')}
+    ${kpiCell(fmt(c.wom_comments),'留言數')}
+    ${kpiCell(fmt(c.wom_shares),'分享數')}
+    ${kpiCell(fmt(c.wom_media_pickups),'媒體轉發數')}
+  </div>`;
+}
+
+function renderReelsLinks(c, allLinks){
+  const links = allLinks.filter(l => l.campaign_id === c.id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+  if(!links.length){
+    return `<div class="empty-state"><div class="icon">▶</div><div class="msg">尚無 Reels 上線，<b>影片連結</b>將於活動開跑後更新於此。</div></div>`;
+  }
+  return `<div class="reels-links">${links.map(l=>`
+    <a class="reel-link-card" href="${l.url||'#'}" target="_blank">
+      <div class="rl-thumb" style="color:${c.accent}">▶</div>
+      <div><div class="rl-title">${l.title||'Reel'}</div><div class="rl-desc">${l.creator || '待補 KOL 名稱'}</div></div>
+    </a>`).join('')}</div>`;
+}
+
+function renderProduct(c, allLinks){
+  const target = c.sales_target != null ? `<div class="meta-item">業績目標 <b>${fmt(c.sales_target)}</b></div>` : '';
+  const baselineNote = (c.sales_campaign == null && c.sales_baseline != null) ? `<div class="meta-item">${c.baseline_method?.includes('YoY')?'去年同期':'前期'} Sales <b>${fmt(c.sales_baseline)}</b></div>` : '';
+  return `
+  <section id="${c.id}">
+    <div class="product-hero">
+      <div class="eyebrow" style="color:${c.accent}">${c.eyebrow||''}</div>
+      <h1>${c.headline||c.name}</h1>
+      <div class="meta">
+        <div class="meta-item">比較基期 <b>${c.baseline_method||'—'}</b></div>
+        ${target}${baselineNote}
+      </div>
+    </div>
+    <div class="block-title"><h2>業績表現</h2><span class="note">SALES GROWTH × TARGET ACHIEVEMENT</span></div>
+    ${renderSalesBlock(c)}
+    <div class="block-title"><h2>KOL Reels 成效</h2><span class="note">REACH → ENGAGEMENT FUNNEL</span></div>
+    ${renderKolBlock(c)}
+    <div class="block-title"><h2>口碑聲量（WOM）</h2><span class="note">FACEBOOK WORD-OF-MOUTH</span></div>
+    ${renderWomBlock(c)}
+    <div class="block-title"><h2>KOL Reels 作品列表</h2><span class="note">點擊查看影片</span></div>
+    ${renderReelsLinks(c, allLinks)}
+  </section>`;
+}
+
+function go(id, btn){
+  document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#navLinks button').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function init(){
+  try{
+    const [campaigns, links] = await Promise.all([
+      fetchCSV(CAMPAIGNS_CSV_URL),
+      fetchCSV(REELS_LINKS_CSV_URL)
+    ]);
+    campaigns.sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+    links.sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+    renderNav(campaigns);
+    const main = document.getElementById('main');
+    main.innerHTML = renderSummary(campaigns) + campaigns.map(c => renderProduct(c, links)).join('');
+  }catch(err){
+    document.getElementById('main').innerHTML = `<div class="err-msg">⚠ 資料載入失敗<br><br><b>${err.message}</b><br><br>請確認頁面頂部的 CAMPAIGNS_CSV_URL／REELS_LINKS_CSV_URL 是否已換成你自己 Google Sheets 發布後的連結。</div>`;
+  }
+}
+init();
+</script>
+</body>
+</html>
