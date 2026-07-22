@@ -90,7 +90,7 @@
   .sm-badge{ flex:1; min-width:200px; padding:14px 18px; border-radius:4px; background:var(--bg-elevated); }
   .sm-badge .bnum{ font-family:'IBM Plex Mono',monospace; font-size:26px; font-weight:600; color:var(--accent); }
   .sm-badge .blabel{ font-size:11.5px; color:var(--ink-faint); margin-top:3px; }
-  .sm-chart{ padding-top:6px; }
+  .sm-chart{ position:relative; padding-top:6px; }
   .sm-track{ position:relative; height:44px; margin-bottom:34px; }
   .sm-track:last-child{ margin-bottom:6px; }
   .sm-track-bg{ position:absolute; left:0; right:0; top:16px; height:12px; background:var(--bg-elevated); border-radius:6px; }
@@ -100,8 +100,8 @@
   .sm-bar.after{ background:var(--accent); box-shadow:0 3px 10px rgba(43,33,24,0.18); }
   .sm-bar-label{ position:absolute; top:-22px; left:0; font-size:12px; color:var(--ink-dim); white-space:nowrap; }
   .sm-bar-label .v{ color:var(--ink); font-family:'IBM Plex Mono',monospace; margin-left:6px; }
-  .sm-target-line{ position:absolute; top:4px; bottom:-14px; width:1.5px; border-left:1.5px dashed var(--ink-faint); }
-  .sm-target-line span{ position:absolute; top:-20px; left:6px; font-size:10.5px; color:var(--ink-faint); white-space:nowrap; font-family:'IBM Plex Mono',monospace; }
+  .sm-target-full{ position:absolute; top:0; bottom:0; width:0; border-left:1.5px dashed var(--ink-faint); z-index:3; }
+  .sm-target-full span{ position:absolute; top:-20px; left:6px; font-size:10.5px; color:var(--ink-faint); white-space:nowrap; font-family:'IBM Plex Mono',monospace; }
 
   .funnel-panel{ background:var(--bg-card); border:1px solid var(--divider); border-radius:4px; padding:28px; margin-bottom:14px; box-shadow:0 2px 10px rgba(43,33,24,0.05); }
   .funnel-row{ display:flex; align-items:center; gap:16px; margin-bottom:8px; }
@@ -119,6 +119,8 @@
   .comp-legend-item .sw{ width:9px; height:9px; border-radius:2px; }
   .comp-legend-item b{ color:var(--ink); font-family:'IBM Plex Mono',monospace; font-weight:500; margin-left:2px; }
 
+  .sub-heading{ font-size:13px; font-weight:600; color:var(--ink-dim); margin:24px 0 12px; letter-spacing:0.02em; }
+
   .reels-links{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
   .reel-link-card{ display:flex; gap:12px; align-items:center; background:var(--bg-card); border:1px solid var(--divider); border-radius:4px; padding:14px; transition:border-color .2s ease, transform .2s ease; box-shadow:0 2px 8px rgba(43,33,24,0.05); }
   .reel-link-card:hover{ border-color:var(--accent); transform:translateY(-2px); }
@@ -126,6 +128,7 @@
   .rl-thumb-img{ width:56px; height:56px; border-radius:4px; object-fit:cover; flex-shrink:0; }
   .rl-title{ font-size:13px; font-weight:600; }
   .rl-desc{ font-size:11px; color:var(--ink-faint); margin-top:2px; }
+  .rl-stats{ font-size:11px; color:var(--ink-faint); margin-top:4px; font-family:'IBM Plex Mono',monospace; }
 
   .load-msg, .err-msg{ padding:80px 0; text-align:center; color:var(--ink-faint); font-size:13.5px; }
   .err-msg b{ color:var(--ink-dim); }
@@ -156,8 +159,7 @@
     .sales-merged, .funnel-panel{ padding:20px 18px; }
     .sm-track{ height:56px; margin-bottom:26px; }
     .sm-bar-label{ font-size:11px; white-space:normal; line-height:1.4; max-width:65%; }
-    .sm-target-line span{ display:none; }
-    .sm-target-line{ top:-2px; }
+    .sm-target-full span{ display:none; }
 
     .funnel-tag{ width:76px; font-size:11px; }
     .funnel-arrow{ margin-left:92px; }
@@ -174,6 +176,7 @@
 <script>
   const CAMPAIGNS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTS4n_vgY-Q17J-3D2tKVUL7YvPvistNn9jo7MxuUJLhfPYXuFTjycsRn5Y6qsqqgarLUbKWNyaZr9S/pub?gid=1164310309&single=true&output=csv";
   const REELS_LINKS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTS4n_vgY-Q17J-3D2tKVUL7YvPvistNn9jo7MxuUJLhfPYXuFTjycsRn5Y6qsqqgarLUbKWNyaZr9S/pub?gid=1462508065&single=true&output=csv";
+  const WOM_LINKS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTS4n_vgY-Q17J-3D2tKVUL7YvPvistNn9jo7MxuUJLhfPYXuFTjycsRn5Y6qsqqgarLUbKWNyaZr9S/pub?gid=87668907&single=true&output=csv";
 </script>
 
 <nav>
@@ -193,7 +196,8 @@ const pct = n => (n === null || n === undefined) ? null : Number(n);
 
 const NUMERIC_FIELDS = ['sort_order','sales_baseline','sales_campaign','sales_target',
   'kol_views','kol_likes','kol_comments','kol_shares','kol_reposts',
-  'wom_likes','wom_comments','wom_shares','wom_media_pickups'];
+  'wom_likes','wom_comments','wom_shares','wom_media_pickups',
+  'likes','comments','shares'];
 
 // 簡易 CSV 解析器（支援雙引號包住含逗號的欄位）
 function parseCSV(text){
@@ -325,16 +329,15 @@ function renderSalesBlock(c){
       <div class="sm-badge"><div class="bnum" style="${achievement==null?'color:var(--ink-faint); font-size:20px;':''}">${achievement!=null?achievement.toFixed(1)+'%':'蒐集中'}</div><div class="blabel">業績目標達成率${c.sales_target!=null?'（目標 '+fmt(c.sales_target)+'）':'（尚未設定）'}</div></div>
     </div>
     <div class="sm-chart">
+      ${targetPct!=null?`<div class="sm-target-full" style="left:${targetPct}%"><span>目標 ${fmt(c.sales_target)}</span></div>`:''}
       <div class="sm-track">
         <div class="sm-bar-label">前期／去年同期 Sales<span class="v">${fmt(c.sales_baseline)}</span></div>
         <div class="sm-track-bg"></div>
-        ${targetPct!=null?`<div class="sm-target-line" style="left:${targetPct}%; border-color:var(--ink-faint)"><span>目標 ${fmt(c.sales_target)}</span></div>`:''}
         <div class="sm-bar before" style="width:${beforePct}%"></div>
       </div>
       <div class="sm-track">
         <div class="sm-bar-label">本期／今年同期 Sales<span class="v" style="${hasCampaign?'':'color:var(--ink-faint)'}">${hasCampaign?fmt(c.sales_campaign):'數據蒐集中'}</span></div>
         <div class="sm-track-bg ${hasCampaign?'':'dashed'}"></div>
-        ${targetPct!=null?`<div class="sm-target-line" style="left:${targetPct}%; border-color:var(--ink-faint)"></div>`:''}
         ${hasCampaign?`<div class="sm-bar after" style="width:${afterPct}%; background:${c.accent}"></div>`:''}
       </div>
     </div>
@@ -368,13 +371,43 @@ function renderKolBlock(c){
   </div>`;
 }
 
-function renderWomBlock(c){
-  return `<div class="metric-grid">
+function renderLinkCards(links, accent, showStats=false){
+  return `<div class="reels-links">${links.map(l=>`
+    <a class="reel-link-card" href="${l.url||'#'}" target="_blank">
+      ${l.thumbnail_url
+        ? `<img class="rl-thumb-img" src="${l.thumbnail_url}" alt="${l.title||''}">`
+        : `<div class="rl-thumb" style="color:${accent}">▶</div>`}
+      <div>
+        <div class="rl-title" style="font-weight:600;">${l.title||''}</div>
+        ${showStats ? `<div class="rl-stats">👍 ${fmt(l.likes)}　💬 ${fmt(l.comments)}　↗ ${fmt(l.shares)}</div>` : ''}
+      </div>
+    </a>`).join('')}</div>`;
+}
+
+function renderWomBlock(c, allWomLinks){
+  const womLinks = allWomLinks.filter(l => l.campaign_id === c.id && l.type === 'wom').sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+  const mediaLinks = allWomLinks.filter(l => l.campaign_id === c.id && l.type === 'media').sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+
+  const hasCounts = [c.wom_likes, c.wom_comments, c.wom_shares, c.wom_media_pickups].some(v => v != null);
+  const hasAnything = hasCounts || womLinks.length || mediaLinks.length;
+  if(!hasAnything) return '';
+
+  const metricsHtml = hasCounts ? `<div class="metric-grid">
     ${kpiCell(fmt(c.wom_likes),'按讚數')}
     ${kpiCell(fmt(c.wom_comments),'留言數')}
     ${kpiCell(fmt(c.wom_shares),'分享數')}
     ${kpiCell(fmt(c.wom_media_pickups),'媒體轉發數')}
-  </div>`;
+  </div>` : '';
+
+  const womLinksHtml = womLinks.length ? `
+    <div class="sub-heading">口碑爆文</div>
+    ${renderLinkCards(womLinks, c.accent, true)}` : '';
+
+  const mediaLinksHtml = mediaLinks.length ? `
+    <div class="sub-heading">媒體報導</div>
+    ${renderLinkCards(mediaLinks, c.accent, false)}` : '';
+
+  return `${metricsHtml}${womLinksHtml}${mediaLinksHtml}`;
 }
 
 function renderReelsLinks(c, allLinks){
@@ -391,9 +424,13 @@ function renderReelsLinks(c, allLinks){
     </a>`).join('')}</div>`;
 }
 
-function renderProduct(c, allLinks){
+function renderProduct(c, allLinks, allWomLinks){
   const target = c.sales_target != null ? `<div class="meta-item">業績目標 <b>${fmt(c.sales_target)}</b></div>` : '';
   const baselineNote = (c.sales_campaign == null && c.sales_baseline != null) ? `<div class="meta-item">${c.baseline_method?.includes('YoY')?'去年同期':'前期'} Sales <b>${fmt(c.sales_baseline)}</b></div>` : '';
+  const womContent = renderWomBlock(c, allWomLinks);
+  const womSection = womContent ? `
+    <div class="block-title"><h2>口碑聲量（WOM）</h2><span class="note">FACEBOOK WORD-OF-MOUTH</span></div>
+    ${womContent}` : '';
   return `
   <section id="${c.id}">
     <div class="product-hero">
@@ -408,8 +445,7 @@ function renderProduct(c, allLinks){
     ${renderSalesBlock(c)}
     <div class="block-title"><h2>KOL Reels 成效</h2><span class="note">REACH → ENGAGEMENT FUNNEL</span></div>
     ${renderKolBlock(c)}
-    <div class="block-title"><h2>口碑聲量（WOM）</h2><span class="note">FACEBOOK WORD-OF-MOUTH</span></div>
-    ${renderWomBlock(c)}
+    ${womSection}
     <div class="block-title"><h2>KOL Reels 作品列表</h2><span class="note">點擊查看影片</span></div>
     ${renderReelsLinks(c, allLinks)}
   </section>`;
@@ -425,17 +461,18 @@ function go(id, btn){
 
 async function init(){
   try{
-    const [campaigns, links] = await Promise.all([
+    const [campaigns, links, womLinks] = await Promise.all([
       fetchCSV(CAMPAIGNS_CSV_URL),
-      fetchCSV(REELS_LINKS_CSV_URL)
+      fetchCSV(REELS_LINKS_CSV_URL),
+      fetchCSV(WOM_LINKS_CSV_URL)
     ]);
     campaigns.sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
     links.sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
     renderNav(campaigns);
     const main = document.getElementById('main');
-    main.innerHTML = renderSummary(campaigns) + campaigns.map(c => renderProduct(c, links)).join('');
+    main.innerHTML = renderSummary(campaigns) + campaigns.map(c => renderProduct(c, links, womLinks)).join('');
   }catch(err){
-    document.getElementById('main').innerHTML = `<div class="err-msg">⚠ 資料載入失敗<br><br><b>${err.message}</b><br><br>請確認頁面頂部的 CAMPAIGNS_CSV_URL／REELS_LINKS_CSV_URL 是否已換成你自己 Google Sheets 發布後的連結。</div>`;
+    document.getElementById('main').innerHTML = `<div class="err-msg">⚠ 資料載入失敗<br><br><b>${err.message}</b><br><br>請確認頁面頂部的 CAMPAIGNS_CSV_URL／REELS_LINKS_CSV_URL／WOM_LINKS_CSV_URL 是否已換成你自己 Google Sheets 發布後的連結。</div>`;
   }
 }
 init();
