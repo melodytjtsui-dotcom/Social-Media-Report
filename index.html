@@ -13,6 +13,7 @@
     --seg-2:#b8873a; --seg-3:#8c6e4e; --seg-4:#5c4a35;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
+  button{ font-family:inherit; -webkit-appearance:none; appearance:none; }
   body{ background:var(--bg); color:var(--ink); font-family:'Inter', sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; }
   ::selection{ background:var(--gold); color:#fffaf0; }
   h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
@@ -64,10 +65,10 @@
   .status-pill.pending{ background:rgba(184,168,144,0.12); color:var(--ink-faint); }
 
   .goto-projects{ margin-top:56px; display:flex; gap:12px; flex-wrap:wrap; }
-  .goto-btn{ flex:1; min-width:220px; background:var(--bg-card); border:1px solid var(--divider); padding:18px 20px; border-radius:4px; cursor:pointer; text-align:left; transition:border-color .2s ease, transform .2s ease; box-shadow:0 2px 8px rgba(43,33,24,0.05); }
+  .goto-btn{ flex:1; min-width:220px; background:var(--bg-card); border:1px solid var(--divider); padding:18px 20px; border-radius:4px; cursor:pointer; text-align:left; transition:border-color .2s ease, transform .2s ease; box-shadow:0 2px 8px rgba(43,33,24,0.05); color:var(--ink); }
   .goto-btn:hover{ border-color:var(--accent); transform:translateY(-2px); }
   .goto-btn .arrow{ float:right; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; }
-  .goto-btn .gname{ font-family:'Fraunces',serif; font-size:16px; font-weight:600; margin-bottom:4px;}
+  .goto-btn .gname{ font-family:'Fraunces',serif; font-size:16px; font-weight:600; margin-bottom:4px; color:var(--ink);}
   .goto-btn .gdesc{ font-size:12px; color:var(--ink-faint); }
 
   .product-hero{ padding:56px 0 32px; border-bottom:1px solid var(--divider); }
@@ -132,16 +133,35 @@
   footer{ text-align:center; padding:40px 0 20px; color:var(--ink-faint); font-size:12px; border-top:1px solid var(--divider); margin-top:40px; }
 
   @media(max-width:760px){
-    nav{ padding:14px 18px; }
+    nav{ flex-direction:column; align-items:flex-start; gap:12px; padding:16px 18px; }
+    .nav-brand{ font-size:15.5px; }
+    .nav-links{ width:100%; gap:6px; }
+    .nav-links button{ padding:7px 12px; font-size:12.5px; }
+
     main{ padding:0 18px 80px; }
-    .hero h1, .product-hero h1{ font-size:28px; }
+    .hero{ padding:40px 0 28px; }
+    .hero h1, .product-hero h1{ font-size:26px; }
+    .product-hero{ padding:36px 0 24px; }
+    .block-title{ margin:40px 0 16px; flex-direction:column; align-items:flex-start; gap:4px; }
+    .block-title .note{ text-align:left; }
+
     .kpi-strip, .kpi-strip.cols4{ grid-template-columns:repeat(2,1fr); }
     .compare-grid{ grid-template-columns:1fr; }
     .metric-grid{ grid-template-columns:repeat(2,1fr); }
     .reels-links{ grid-template-columns:1fr; }
+    .goto-projects{ flex-direction:column; }
+
     .sm-header{ flex-direction:column; }
+    .sm-badge .bnum{ font-size:22px; }
+    .sales-merged, .funnel-panel{ padding:20px 18px; }
+    .sm-track{ height:56px; margin-bottom:26px; }
+    .sm-bar-label{ font-size:11px; white-space:normal; line-height:1.4; max-width:65%; }
+    .sm-target-line span{ display:none; }
+    .sm-target-line{ top:-2px; }
+
     .funnel-tag{ width:76px; font-size:11px; }
     .funnel-arrow{ margin-left:92px; }
+    .funnel-row{ gap:10px; }
   }
 </style>
 </head>
